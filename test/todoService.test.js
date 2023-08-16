@@ -5,6 +5,7 @@ import assert from 'node:assert'
 describe('todoService test Suite', () => {
     describe('#list', () => {
         let _todoService
+        let _dependencies
         const mockDatabase = [
             {
                 text: 'I MUST MEET CHAVES DA SILVA',
@@ -14,17 +15,26 @@ describe('todoService test Suite', () => {
             }
         ]
         beforeEach((context) => {
-            const dependencies = {
+            _dependencies = {
                 todoRepository: {
                     list: context.mock.fn(async () => mockDatabase)
                 }
             }
-            _todoService = new TodoService(dependencies)
+            _todoService = new TodoService(_dependencies)
         })
         it('should return a list of items with uppercase text', async ()=>{
             const expected = mockDatabase.map(({ text, ...result }) => ({ text: text.toUpperCase(), ...result }))
+            
             const result = await _todoService.list()
             assert.deepStrictEqual(result, expected)
+            
+            const fnMock = _dependencies.todoRepository.list.mock
+            assert.deepStrictEqual(fnMock.callCount(), 1)
         })
+    })
+    describe('#create', () => {
+        let _todoService
+        let _dependencies
+
     })
 })
